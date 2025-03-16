@@ -1,0 +1,49 @@
+import React from 'react';
+import { TodoItem } from './TodoItem';
+import { Todo } from '../types/Todo';
+
+type Props = {
+  todos: Todo[];
+  setTodos: (arg: Todo[]) => void;
+  allTodos: Todo[];
+  setAllTodos: (arg: Todo[]) => void;
+  loadingTodo: boolean;
+  setErrorMessage: (arg: string) => void;
+  setLoadingTodo: (arg: boolean) => void;
+  loadingTodoId: number[];
+  setLoadingTodoId: (arg: number[]) => void;
+  setAllActive: (arg: boolean) => void;
+};
+
+export const TodoList: React.FC<Props> = ({
+  todos,
+  allTodos,
+  setTodos,
+  setAllTodos,
+  loadingTodo,
+  setErrorMessage,
+  setLoadingTodo,
+  loadingTodoId,
+  setLoadingTodoId,
+  setAllActive,
+}) => {
+  return (
+    <section className="todoapp__main" data-cy="TodoList">
+      {todos.map(todo => (
+        <TodoItem
+          key={todo.id}
+          todo={todo}
+          setTodos={setTodos}
+          allTodos={allTodos}
+          setAllTodos={setAllTodos}
+          loadingTodo={loadingTodo}
+          setErrorMessage={setErrorMessage}
+          setLoadingTodo={setLoadingTodo}
+          loadingTodoId={loadingTodoId}
+          setLoadingTodoId={setLoadingTodoId}
+          setAllActive={setAllActive}
+        />
+      ))}
+    </section>
+  );
+};
