@@ -90,7 +90,6 @@ export const App: React.FC = () => {
           setInputValue={setInputValue}
         />
 
-        {/* This is a completed todo */}
         <TodoList
           todos={todos}
           allTodos={allTodos}
@@ -104,7 +103,6 @@ export const App: React.FC = () => {
           setAllActive={setAllActive}
         />
 
-        {/* Hide the footer if there are no todos */}
         {allTodos.length > 0 && (
           <Footer
             todosCounter={todosCounter}
@@ -119,8 +117,6 @@ export const App: React.FC = () => {
         )}
       </div>
 
-      {/* DON'T use conditional rendering to hide the notification */}
-      {/* Add the 'hidden' class to hide the message smoothly */}
       <div
         data-cy="ErrorNotification"
         className={classNames(
@@ -136,7 +132,6 @@ export const App: React.FC = () => {
           className="delete"
           onClick={() => setErrorButton(true)}
         />
-        {/* show only one message at a time */}
         {errorMessage.length > 0 && errorMessage}
       </div>
     </div>

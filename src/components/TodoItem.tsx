@@ -1,5 +1,4 @@
 import classNames from 'classnames';
-// import React, { useEffect } from 'react';
 import { Todo } from '../types/Todo';
 import { deleteTodo, updateTodo } from '../api/todos';
 import { useEffect, useRef, useState } from 'react';
@@ -18,7 +17,7 @@ type Props = {
 };
 
 export const TodoItem: React.FC<Props> = ({
-  todo,
+  todo: { id, completed, title, userId },
   setTodos,
   allTodos,
   setAllTodos,
@@ -34,7 +33,6 @@ export const TodoItem: React.FC<Props> = ({
   const [titleInputValue, setTitleInputValue] = useState('');
   //#region handle functions
   const handleDeleteButton = (todoId: number) => {
-    // Встановлюємо тудушку на load та todoId
     setLoadingTodo(true);
     setLoadingTodoId([todoId]);
 
@@ -52,15 +50,14 @@ export const TodoItem: React.FC<Props> = ({
 
   const handleToggleTodo = () => {
     setLoadingTodo(true);
-    setLoadingTodoId([todo.id]);
+    setLoadingTodoId([id]);
 
-    const updatedTodo = { ...todo, completed: !todo.completed };
+    const updatedTodo = { id, completed: !completed, title, userId };
 
     const allCompleted = allTodos.every(todoEl => todoEl.completed);
 
     setAllActive(allCompleted);
 
-    //toggle completed or not todo
     updateTodo(updatedTodo)
       .then(todoEle => {
         const updatedTodos = allTodos.map(t =>
@@ -79,29 +76,28 @@ export const TodoItem: React.FC<Props> = ({
 
   const handleDoubleClick = () => {
     setEditingTitle(true);
-    setTitleInputValue(todo.title);
+    setTitleInputValue(title);
   };
 
   const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
     setLoadingTodo(true);
-    setLoadingTodoId([todo.id]);
+    setLoadingTodoId([id]);
 
     const preparedTitle = titleInputValue.trim();
 
-    if (preparedTitle === todo.title) {
+    if (preparedTitle === title) {
       setEditingTitle(false);
     }
 
     if (preparedTitle.length === 0) {
-      handleDeleteButton(todo.id);
+      handleDeleteButton(id);
 
       return;
     }
 
-    const updatedTodo = { ...todo, title: preparedTitle };
+    const updatedTodo = { id, title: preparedTitle, completed, userId };
 
-    //toggle completed or not todo
     updateTodo(updatedTodo)
       .then(todoElement => {
         const updatedTodos = allTodos.map(t =>
@@ -132,7 +128,7 @@ export const TodoItem: React.FC<Props> = ({
   const handleBlur = () => {
     const preparedTitle = titleInputValue.trim();
 
-    if (preparedTitle === todo.title) {
+    if (preparedTitle === title) {
       setEditingTitle(false);
 
       return;
@@ -150,15 +146,15 @@ export const TodoItem: React.FC<Props> = ({
 
   useEffect(() => {
     if (editingTitle) {
-      setTitleInputValue(todo.title);
+      setTitleInputValue(title);
     }
-  }, [editingTitle, todo.title]);
+  }, [editingTitle, title]);
 
   return (
     <div
       data-cy="Todo"
       className={classNames('todo', {
-        completed: todo.completed,
+        completed: completed,
       })}
     >
       <label className="todo__status-label" aria-label="toggle todo completion">
@@ -166,7 +162,7 @@ export const TodoItem: React.FC<Props> = ({
           data-cy="TodoStatus"
           type="checkbox"
           className={classNames('todo__status')}
-          checked={todo.completed}
+          checked={completed}
           onChange={handleToggleTodo}
         />
       </label>
@@ -193,13 +189,13 @@ export const TodoItem: React.FC<Props> = ({
             className="todo__title"
             onDoubleClick={handleDoubleClick}
           >
-            {todo.title}
+            {title}
           </span>
           <button
             type="button"
             className="todo__remove"
             data-cy="TodoDelete"
-            onClick={() => handleDeleteButton(todo.id)}
+            onClick={() => handleDeleteButton(id)}
           >
             ×
           </button>
@@ -209,7 +205,7 @@ export const TodoItem: React.FC<Props> = ({
       <div
         data-cy="TodoLoader"
         className={classNames('modal overlay', {
-          'is-active': loadingTodo && loadingTodoId.includes(todo.id),
+          'is-active': loadingTodo && loadingTodoId.includes(id),
         })}
       >
         <div className="modal-background has-background-white-ter" />
