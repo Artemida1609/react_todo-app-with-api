@@ -8,12 +8,9 @@ type Props = {
   setTodos: (arg: Todo[]) => void;
   allTodos: Todo[];
   setAllTodos: (arg: Todo[]) => void;
-  loadingTodo: boolean;
   setErrorMessage: (arg: string) => void;
-  setLoadingTodo: (arg: boolean) => void;
   loadingTodoId: number[];
   setLoadingTodoId: (arg: number[]) => void;
-  setAllActive: (arg: boolean) => void;
 };
 
 export const TodoItem: React.FC<Props> = ({
@@ -21,19 +18,15 @@ export const TodoItem: React.FC<Props> = ({
   setTodos,
   allTodos,
   setAllTodos,
-  loadingTodo,
   setErrorMessage,
-  setLoadingTodo,
   loadingTodoId,
   setLoadingTodoId,
-  setAllActive,
 }) => {
   const titleFocus = useRef<HTMLInputElement>(null);
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleInputValue, setTitleInputValue] = useState('');
-  //#region handle functions
+
   const handleDeleteButton = (todoId: number) => {
-    setLoadingTodo(true);
     setLoadingTodoId([todoId]);
 
     deleteTodo(todoId)
@@ -42,21 +35,15 @@ export const TodoItem: React.FC<Props> = ({
 
         setTodos([...filtered]);
         setAllTodos([...filtered]);
-        setLoadingTodo(false);
         setLoadingTodoId([]);
       })
       .catch(() => setErrorMessage(`Unable to delete a todo`));
   };
 
   const handleToggleTodo = () => {
-    setLoadingTodo(true);
     setLoadingTodoId([id]);
 
     const updatedTodo = { id, completed: !completed, title, userId };
-
-    const allCompleted = allTodos.every(todoEl => todoEl.completed);
-
-    setAllActive(allCompleted);
 
     updateTodo(updatedTodo)
       .then(todoEle => {
@@ -69,7 +56,6 @@ export const TodoItem: React.FC<Props> = ({
       })
       .catch(() => setErrorMessage('Unable to update a todo'))
       .finally(() => {
-        setLoadingTodo(false);
         setLoadingTodoId([]);
       });
   };
@@ -81,7 +67,6 @@ export const TodoItem: React.FC<Props> = ({
 
   const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
-    setLoadingTodo(true);
     setLoadingTodoId([id]);
 
     const preparedTitle = titleInputValue.trim();
@@ -112,13 +97,13 @@ export const TodoItem: React.FC<Props> = ({
         setErrorMessage('Unable to update a todo');
       })
       .finally(() => {
-        setLoadingTodo(false);
         setLoadingTodoId([]);
       });
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
+      event.preventDefault();
       handleSubmit();
     } else if (event.key === 'Escape') {
       setEditingTitle(false);
@@ -136,7 +121,6 @@ export const TodoItem: React.FC<Props> = ({
 
     handleSubmit();
   };
-  //#endregion
 
   useEffect(() => {
     if (titleFocus.current) {
@@ -205,7 +189,7 @@ export const TodoItem: React.FC<Props> = ({
       <div
         data-cy="TodoLoader"
         className={classNames('modal overlay', {
-          'is-active': loadingTodo && loadingTodoId.includes(id),
+          'is-active': loadingTodoId.includes(id),
         })}
       >
         <div className="modal-background has-background-white-ter" />

@@ -25,7 +25,6 @@ export const Footer: React.FC<Props> = ({
   setAllTodos,
   setErrorMessage,
 }) => {
-  //#region handle functions
   const handleClearCompleted = () => {
     const allCompletedTodos = todos.filter(todo => todo.completed);
 
@@ -52,7 +51,6 @@ export const Footer: React.FC<Props> = ({
       },
     );
   };
-  //#endregion
 
   return (
     <footer className="todoapp__footer" data-cy="Footer">

@@ -7,12 +7,9 @@ type Props = {
   setTodos: (arg: Todo[]) => void;
   allTodos: Todo[];
   setAllTodos: (arg: Todo[]) => void;
-  loadingTodo: boolean;
   setErrorMessage: (arg: string) => void;
-  setLoadingTodo: (arg: boolean) => void;
   loadingTodoId: number[];
   setLoadingTodoId: (arg: number[]) => void;
-  setAllActive: (arg: boolean) => void;
 };
 
 export const TodoList: React.FC<Props> = ({
@@ -20,12 +17,9 @@ export const TodoList: React.FC<Props> = ({
   allTodos,
   setTodos,
   setAllTodos,
-  loadingTodo,
   setErrorMessage,
-  setLoadingTodo,
   loadingTodoId,
   setLoadingTodoId,
-  setAllActive,
 }) => {
   return (
     <section className="todoapp__main" data-cy="TodoList">
@@ -36,12 +30,9 @@ export const TodoList: React.FC<Props> = ({
           setTodos={setTodos}
           allTodos={allTodos}
           setAllTodos={setAllTodos}
-          loadingTodo={loadingTodo}
           setErrorMessage={setErrorMessage}
-          setLoadingTodo={setLoadingTodo}
           loadingTodoId={loadingTodoId}
           setLoadingTodoId={setLoadingTodoId}
-          setAllActive={setAllActive}
         />
       ))}
     </section>

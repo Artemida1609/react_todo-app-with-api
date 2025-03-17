@@ -8,10 +8,8 @@ type Props = {
   setTodos: (arg: Todo[]) => void;
   setAllTodos: (arg: Todo[]) => void;
   allTodos: Todo[];
-  setLoadingTodo: (arg: boolean) => void;
   setTodosCounter: (arg: number) => void;
   setLoadingTodoId: (arg: number[]) => void;
-  allActive: boolean;
   inputFocus: React.RefObject<HTMLInputElement>;
   inputValue: string;
   setInputValue: (arg: string) => void;
@@ -22,10 +20,8 @@ export const Header: React.FC<Props> = ({
   setTodos,
   setAllTodos,
   allTodos,
-  setLoadingTodo,
   setTodosCounter,
   setLoadingTodoId,
-  allActive,
   inputFocus,
   inputValue,
   setInputValue,
@@ -33,7 +29,6 @@ export const Header: React.FC<Props> = ({
   const [disabled, setDisabled] = useState(false);
   const [enableCounter, setEnableCounter] = useState(true);
 
-  // #region handle functions
   const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
     event.preventDefault();
     if (inputValue.trim().length === 0) {
@@ -53,7 +48,6 @@ export const Header: React.FC<Props> = ({
       };
 
       setDisabled(true);
-      setLoadingTodo(true);
       setLoadingTodoId([tempTodo.id]);
       setEnableCounter(false);
       setAllTodos([...allTodos, tempTodo]);
@@ -64,7 +58,6 @@ export const Header: React.FC<Props> = ({
 
           setAllTodos([...todos, newTodoFromServer]);
           setEnableCounter(true);
-          setLoadingTodo(false);
           setLoadingTodoId([]);
           setDisabled(false);
           setInputValue('');
@@ -110,9 +103,7 @@ export const Header: React.FC<Props> = ({
       })
       .catch(() => setErrorMessage('Unable to update a todo'));
   };
-  //#endregion
 
-  //#region useEffects
   useEffect(() => {
     if (inputFocus.current) {
       inputFocus.current.focus();
@@ -124,7 +115,8 @@ export const Header: React.FC<Props> = ({
       setTodosCounter(allTodos.filter(todo => !todo.completed).length);
     }
   }, [allTodos, enableCounter, setTodosCounter]);
-  //#endregion
+
+  const allTodosActive = allTodos.length === allTodos.filter(todoItem => todoItem.completed).length;
 
   return (
     <header className="todoapp__header">
@@ -132,7 +124,7 @@ export const Header: React.FC<Props> = ({
         <button
           type="button"
           className={classNames('todoapp__toggle-all', {
-            active: allActive,
+            active: allTodosActive,
           })}
           data-cy="ToggleAllButton"
           onClick={handleToggleAll}

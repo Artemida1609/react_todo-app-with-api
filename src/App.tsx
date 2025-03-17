@@ -11,21 +11,15 @@ import { Footer } from './components/Footer';
 import { FilterType } from './enums/FilterType';
 
 export const App: React.FC = () => {
-  // #region useState
   const [todos, setTodos] = useState<Todo[]>([]);
   const [allTodos, setAllTodos] = useState<Todo[]>([]);
   const [selectedLink, setSelectedLink] = useState(FilterType.All);
-  const [errorButton, setErrorButton] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [todosCounter, setTodosCounter] = useState(0);
-  const [loadingTodo, setLoadingTodo] = useState(false);
   const [loadingTodoId, setLoadingTodoId] = useState<number[]>([]);
-  const [allActive, setAllActive] = useState(false);
   const inputFocus = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState('');
-  // #endregion
 
-  // #region useEffect
   useEffect(() => {
     getTodos()
       .then(setAllTodos)
@@ -60,13 +54,6 @@ export const App: React.FC = () => {
     return;
   }, [errorMessage]);
 
-  useEffect(() => {
-    const allCompleted = allTodos.every(todo => todo.completed);
-
-    setAllActive(allCompleted);
-  }, [allTodos]);
-  // #endregion
-
   if (!USER_ID) {
     return <UserWarning />;
   }
@@ -81,10 +68,8 @@ export const App: React.FC = () => {
           setTodos={setTodos}
           setAllTodos={setAllTodos}
           allTodos={allTodos}
-          setLoadingTodo={setLoadingTodo}
           setTodosCounter={setTodosCounter}
           setLoadingTodoId={setLoadingTodoId}
-          allActive={allActive}
           inputFocus={inputFocus}
           inputValue={inputValue}
           setInputValue={setInputValue}
@@ -95,12 +80,9 @@ export const App: React.FC = () => {
           allTodos={allTodos}
           setTodos={setTodos}
           setAllTodos={setAllTodos}
-          loadingTodo={loadingTodo}
           setErrorMessage={setErrorMessage}
-          setLoadingTodo={setLoadingTodo}
           loadingTodoId={loadingTodoId}
           setLoadingTodoId={setLoadingTodoId}
-          setAllActive={setAllActive}
         />
 
         {allTodos.length > 0 && (
@@ -122,16 +104,11 @@ export const App: React.FC = () => {
         className={classNames(
           'notification is-danger is-light has-text-weight-normal',
           {
-            hidden: errorButton || errorMessage.length === 0,
+            hidden: errorMessage.length === 0,
           },
         )}
       >
-        <button
-          data-cy="HideErrorButton"
-          type="button"
-          className="delete"
-          onClick={() => setErrorButton(true)}
-        />
+        <button data-cy="HideErrorButton" type="button" className="delete" />
         {errorMessage.length > 0 && errorMessage}
       </div>
     </div>
