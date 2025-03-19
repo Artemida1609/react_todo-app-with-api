@@ -80,6 +80,10 @@ export const Header: React.FC<Props> = ({
       todosToToggle = allTodos.filter(todoEl => todoEl.completed);
     }
 
+    const todosId = todosToToggle.map(todoElem => todoElem.id);
+
+    setLoadingTodoId(todosId);
+
     Promise.allSettled(
       todosToToggle.map(todo => {
         const updatedTodo = { ...todo, completed: !todo.completed };
@@ -100,6 +104,7 @@ export const Header: React.FC<Props> = ({
 
         setTodos(updatedTodos);
         setAllTodos(updatedTodos);
+        setLoadingTodoId([]);
       })
       .catch(() => setErrorMessage('Unable to update a todo'));
   };
@@ -116,7 +121,8 @@ export const Header: React.FC<Props> = ({
     }
   }, [allTodos, enableCounter, setTodosCounter]);
 
-  const allTodosActive = allTodos.length === allTodos.filter(todoItem => todoItem.completed).length;
+  const allTodosActive =
+    allTodos.length === allTodos.filter(todoItem => todoItem.completed).length;
 
   return (
     <header className="todoapp__header">

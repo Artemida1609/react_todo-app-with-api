@@ -90,6 +90,7 @@ export const App: React.FC = () => {
             todosCounter={todosCounter}
             selectedLink={selectedLink}
             setSelectedLink={setSelectedLink}
+            setLoadingTodoId={setLoadingTodoId}
             todos={todos}
             allTodos={allTodos}
             setTodos={setTodos}

@@ -13,6 +13,7 @@ type Props = {
   allTodos: Todo[];
   setAllTodos: (arg: Todo[]) => void;
   setErrorMessage: (arg: string) => void;
+  setLoadingTodoId: (arg: number[]) => void;
 };
 
 export const Footer: React.FC<Props> = ({
@@ -24,9 +25,13 @@ export const Footer: React.FC<Props> = ({
   allTodos,
   setAllTodos,
   setErrorMessage,
+  setLoadingTodoId,
 }) => {
   const handleClearCompleted = () => {
     const allCompletedTodos = todos.filter(todo => todo.completed);
+    const todoIds = allCompletedTodos.map(todoElem => todoElem.id);
+
+    setLoadingTodoId(todoIds);
 
     Promise.allSettled(allCompletedTodos.map(todo => deleteTodo(todo.id))).then(
       results => {
@@ -45,6 +50,7 @@ export const Footer: React.FC<Props> = ({
 
         setTodos(updatedTodos);
         setAllTodos(updatedTodos);
+        setLoadingTodoId([]);
         if (failedIds.length > 0) {
           setErrorMessage('Unable to delete a todo');
         }
