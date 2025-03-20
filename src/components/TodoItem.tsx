@@ -5,22 +5,22 @@ import { useEffect, useRef, useState } from 'react';
 
 type Props = {
   todo: Todo;
+  todos: Todo[];
   setTodos: (arg: Todo[]) => void;
-  allTodos: Todo[];
-  setAllTodos: (arg: Todo[]) => void;
   setErrorMessage: (arg: string) => void;
   loadingTodoId: number[];
   setLoadingTodoId: (arg: number[]) => void;
+  setFilteredTodos: (arg: Todo[]) => void;
 };
 
 export const TodoItem: React.FC<Props> = ({
   todo: { id, completed, title, userId },
+  todos,
   setTodos,
-  allTodos,
-  setAllTodos,
   setErrorMessage,
   loadingTodoId,
   setLoadingTodoId,
+  setFilteredTodos,
 }) => {
   const titleFocus = useRef<HTMLInputElement>(null);
   const [editingTitle, setEditingTitle] = useState(false);
@@ -31,10 +31,10 @@ export const TodoItem: React.FC<Props> = ({
 
     deleteTodo(todoId)
       .then(() => {
-        const filtered = allTodos.filter(todoItem => todoItem.id !== todoId);
+        const filtered = todos.filter(todoItem => todoItem.id !== todoId);
 
         setTodos([...filtered]);
-        setAllTodos([...filtered]);
+        setFilteredTodos([...filtered]);
         setLoadingTodoId([]);
       })
       .catch(() => setErrorMessage(`Unable to delete a todo`));
@@ -47,12 +47,12 @@ export const TodoItem: React.FC<Props> = ({
 
     updateTodo(updatedTodo)
       .then(todoEle => {
-        const updatedTodos = allTodos.map(t =>
+        const updatedTodos = todos.map(t =>
           t.id === todoEle.id ? updatedTodo : t,
         );
 
         setTodos(updatedTodos);
-        setAllTodos(updatedTodos);
+        setFilteredTodos(updatedTodos);
       })
       .catch(() => setErrorMessage('Unable to update a todo'))
       .finally(() => {
@@ -85,12 +85,12 @@ export const TodoItem: React.FC<Props> = ({
 
     updateTodo(updatedTodo)
       .then(todoElement => {
-        const updatedTodos = allTodos.map(t =>
+        const updatedTodos = todos.map(t =>
           t.id === todoElement.id ? updatedTodo : t,
         );
 
         setTodos(updatedTodos);
-        setAllTodos(updatedTodos);
+        // setTodos(updatedTodos);
         setEditingTitle(false);
       })
       .catch(() => {
@@ -113,7 +113,7 @@ export const TodoItem: React.FC<Props> = ({
   const handleBlur = () => {
     const preparedTitle = titleInputValue.trim();
 
-    if (preparedTitle === title) {
+    if (preparedTitle === title.trim()) {
       setEditingTitle(false);
 
       return;

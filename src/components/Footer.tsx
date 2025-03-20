@@ -1,32 +1,45 @@
 import classNames from 'classnames';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Todo } from '../types/Todo';
 import { FilterType } from '../enums/FilterType';
 import { deleteTodo } from '../api/todos';
 
 type Props = {
-  todosCounter: number;
-  selectedLink: FilterType;
-  setSelectedLink: (arg: FilterType) => void;
   todos: Todo[];
   setTodos: (arg: Todo[]) => void;
-  allTodos: Todo[];
-  setAllTodos: (arg: Todo[]) => void;
   setErrorMessage: (arg: string) => void;
   setLoadingTodoId: (arg: number[]) => void;
+  setFilteredTodos: (arg: Todo[]) => void;
 };
 
 export const Footer: React.FC<Props> = ({
-  todosCounter,
-  selectedLink,
-  setSelectedLink,
   todos,
   setTodos,
-  allTodos,
-  setAllTodos,
   setErrorMessage,
   setLoadingTodoId,
+  setFilteredTodos,
 }) => {
+  const [completedTodos, setCompletedTodos] = useState<Todo[]>(todos);
+  const [activeTodos, setActiveTodos] = useState<Todo[]>(todos);
+  const [selectedLink, setSelectedLink] = useState(FilterType.All);
+
+  const filterTodos = (selectedLinkProp: FilterType) => {
+    switch (selectedLinkProp) {
+      case FilterType.Active:
+        setSelectedLink(FilterType.Active);
+        setFilteredTodos(todos.filter(todo => !todo.completed));
+        break;
+      case FilterType.Completed:
+        setSelectedLink(FilterType.Completed);
+        setFilteredTodos(todos.filter(todo => todo.completed));
+        break;
+      default:
+        setSelectedLink(FilterType.All);
+        setFilteredTodos(todos);
+        break;
+    }
+  };
+
   const handleClearCompleted = () => {
     const allCompletedTodos = todos.filter(todo => todo.completed);
     const todoIds = allCompletedTodos.map(todoElem => todoElem.id);
@@ -49,7 +62,7 @@ export const Footer: React.FC<Props> = ({
         );
 
         setTodos(updatedTodos);
-        setAllTodos(updatedTodos);
+        setFilteredTodos(updatedTodos);
         setLoadingTodoId([]);
         if (failedIds.length > 0) {
           setErrorMessage('Unable to delete a todo');
@@ -58,10 +71,19 @@ export const Footer: React.FC<Props> = ({
     );
   };
 
+  useEffect(() => {
+    const completed = todos.filter(todoEl => todoEl.completed);
+    const active = todos.filter(todoElem => !todoElem.completed);
+
+    setCompletedTodos(completed);
+    setActiveTodos(active);
+    filterTodos(selectedLink);
+  }, [todos]);
+
   return (
     <footer className="todoapp__footer" data-cy="Footer">
       <span className="todo-count" data-cy="TodosCounter">
-        {`${todosCounter} items left`}
+        {`${activeTodos.length} items left`}
       </span>
 
       <nav className="filter" data-cy="Filter">
@@ -74,7 +96,7 @@ export const Footer: React.FC<Props> = ({
                 selected: selectedLink === type,
               })}
               data-cy={type === 'All' ? 'FilterLinkAll' : `FilterLink${type}`}
-              onClick={() => setSelectedLink(type)}
+              onClick={() => filterTodos(type)}
             >
               {type}
             </a>
@@ -85,7 +107,7 @@ export const Footer: React.FC<Props> = ({
       <button
         type="button"
         className="todoapp__clear-completed"
-        disabled={!allTodos.some(todo => todo.completed)}
+        disabled={completedTodos.length === 0}
         data-cy="ClearCompletedButton"
         onClick={handleClearCompleted}
       >

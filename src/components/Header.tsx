@@ -5,29 +5,26 @@ import classNames from 'classnames';
 
 type Props = {
   setErrorMessage: (arg: string) => void;
+  todos: Todo[];
   setTodos: (arg: Todo[]) => void;
-  setAllTodos: (arg: Todo[]) => void;
-  allTodos: Todo[];
-  setTodosCounter: (arg: number) => void;
   setLoadingTodoId: (arg: number[]) => void;
   inputFocus: React.RefObject<HTMLInputElement>;
   inputValue: string;
   setInputValue: (arg: string) => void;
+  setFilteredTodos: (arg: Todo[]) => void;
 };
 
 export const Header: React.FC<Props> = ({
   setErrorMessage,
+  todos,
   setTodos,
-  setAllTodos,
-  allTodos,
-  setTodosCounter,
   setLoadingTodoId,
   inputFocus,
   inputValue,
   setInputValue,
+  setFilteredTodos,
 }) => {
   const [disabled, setDisabled] = useState(false);
-  const [enableCounter, setEnableCounter] = useState(true);
 
   const handleSubmit: FormEventHandler<HTMLFormElement> = event => {
     event.preventDefault();
@@ -49,35 +46,37 @@ export const Header: React.FC<Props> = ({
 
       setDisabled(true);
       setLoadingTodoId([tempTodo.id]);
-      setEnableCounter(false);
-      setAllTodos([...allTodos, tempTodo]);
+      setFilteredTodos([...todos, tempTodo]);
 
       addTodo(newTodo)
         .then(newTodoFromServer => {
-          const todos = allTodos.slice(0, allTodos.length);
-
-          setAllTodos([...todos, newTodoFromServer]);
-          setEnableCounter(true);
+          setTodos([...todos, newTodoFromServer]);
+          setFilteredTodos([...todos, newTodoFromServer]);
           setLoadingTodoId([]);
           setDisabled(false);
           setInputValue('');
         })
         .catch(() => {
           setErrorMessage('Unable to add a todo');
-          setAllTodos(allTodos.slice(0, allTodos.length));
+          setTodos(todos.slice(0, todos.length));
+          setFilteredTodos(todos.slice(0, todos.length));
           setDisabled(false);
+
+          setTimeout(() => {
+            inputFocus.current?.focus();
+          }, 0);
         });
     }
   };
 
   const handleToggleAll = () => {
     let todosToToggle = [];
-    const activeTodos = allTodos.filter(todoElem => !todoElem.completed);
+    const activeTodos = todos.filter(todoElem => !todoElem.completed);
 
     if (activeTodos.length > 0) {
       todosToToggle = [...activeTodos];
     } else {
-      todosToToggle = allTodos.filter(todoEl => todoEl.completed);
+      todosToToggle = todos.filter(todoEl => todoEl.completed);
     }
 
     const todosId = todosToToggle.map(todoElem => todoElem.id);
@@ -92,7 +91,7 @@ export const Header: React.FC<Props> = ({
       }),
     )
       .then(results => {
-        const updatedTodos = allTodos.map(todo => {
+        const updatedTodos = todos.map(todo => {
           const updatedTodoResult = results.find(
             res => res.status === 'fulfilled' && res.value?.id === todo.id,
           );
@@ -103,7 +102,7 @@ export const Header: React.FC<Props> = ({
         });
 
         setTodos(updatedTodos);
-        setAllTodos(updatedTodos);
+        setFilteredTodos(updatedTodos);
         setLoadingTodoId([]);
       })
       .catch(() => setErrorMessage('Unable to update a todo'));
@@ -113,20 +112,14 @@ export const Header: React.FC<Props> = ({
     if (inputFocus.current) {
       inputFocus.current.focus();
     }
-  }, [allTodos.length, inputValue, inputFocus]);
-
-  useEffect(() => {
-    if (enableCounter) {
-      setTodosCounter(allTodos.filter(todo => !todo.completed).length);
-    }
-  }, [allTodos, enableCounter, setTodosCounter]);
+  }, [todos.length, inputValue, inputFocus]);
 
   const allTodosActive =
-    allTodos.length === allTodos.filter(todoItem => todoItem.completed).length;
+    todos.length === todos.filter(todoItem => todoItem.completed).length;
 
   return (
     <header className="todoapp__header">
-      {allTodos.length > 0 && (
+      {todos.length > 0 && (
         <button
           type="button"
           className={classNames('todoapp__toggle-all', {

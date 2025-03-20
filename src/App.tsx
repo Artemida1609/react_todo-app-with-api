@@ -8,39 +8,27 @@ import classNames from 'classnames';
 import { Header } from './components/Header';
 import { TodoList } from './components/TodoList';
 import { Footer } from './components/Footer';
-import { FilterType } from './enums/FilterType';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [allTodos, setAllTodos] = useState<Todo[]>([]);
-  const [selectedLink, setSelectedLink] = useState(FilterType.All);
   const [errorMessage, setErrorMessage] = useState('');
-  const [todosCounter, setTodosCounter] = useState(0);
   const [loadingTodoId, setLoadingTodoId] = useState<number[]>([]);
   const inputFocus = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState('');
+  const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
 
   useEffect(() => {
     getTodos()
-      .then(setAllTodos)
+      .then(todosFromServer => {
+        if (todosFromServer) {
+          setTodos(todosFromServer);
+          setFilteredTodos(todosFromServer);
+        }
+      })
       .catch(() => {
         setErrorMessage('Unable to load todos');
       });
   }, []);
-
-  useEffect(() => {
-    switch (selectedLink) {
-      case FilterType.active:
-        setTodos(allTodos.filter(todo => !todo.completed));
-        break;
-      case FilterType.completed:
-        setTodos(allTodos.filter(todo => todo.completed));
-        break;
-      default:
-        setTodos(allTodos);
-        break;
-    }
-  }, [selectedLink, allTodos]);
 
   useEffect(() => {
     if (errorMessage) {
@@ -66,36 +54,31 @@ export const App: React.FC = () => {
         <Header
           setErrorMessage={setErrorMessage}
           setTodos={setTodos}
-          setAllTodos={setAllTodos}
-          allTodos={allTodos}
-          setTodosCounter={setTodosCounter}
+          todos={todos}
           setLoadingTodoId={setLoadingTodoId}
           inputFocus={inputFocus}
           inputValue={inputValue}
           setInputValue={setInputValue}
+          setFilteredTodos={setFilteredTodos}
         />
 
         <TodoList
           todos={todos}
-          allTodos={allTodos}
           setTodos={setTodos}
-          setAllTodos={setAllTodos}
           setErrorMessage={setErrorMessage}
           loadingTodoId={loadingTodoId}
           setLoadingTodoId={setLoadingTodoId}
+          filteredTodos={filteredTodos}
+          setFilteredTodos={setFilteredTodos}
         />
 
-        {allTodos.length > 0 && (
+        {todos.length > 0 && (
           <Footer
-            todosCounter={todosCounter}
-            selectedLink={selectedLink}
-            setSelectedLink={setSelectedLink}
             setLoadingTodoId={setLoadingTodoId}
             todos={todos}
-            allTodos={allTodos}
             setTodos={setTodos}
-            setAllTodos={setAllTodos}
             setErrorMessage={setErrorMessage}
+            setFilteredTodos={setFilteredTodos}
           />
         )}
       </div>

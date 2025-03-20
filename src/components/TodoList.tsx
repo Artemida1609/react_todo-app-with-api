@@ -5,34 +5,34 @@ import { Todo } from '../types/Todo';
 type Props = {
   todos: Todo[];
   setTodos: (arg: Todo[]) => void;
-  allTodos: Todo[];
-  setAllTodos: (arg: Todo[]) => void;
   setErrorMessage: (arg: string) => void;
   loadingTodoId: number[];
   setLoadingTodoId: (arg: number[]) => void;
+  filteredTodos: Todo[];
+  setFilteredTodos: (arg: Todo[]) => void;
 };
 
 export const TodoList: React.FC<Props> = ({
   todos,
-  allTodos,
   setTodos,
-  setAllTodos,
   setErrorMessage,
   loadingTodoId,
   setLoadingTodoId,
+  filteredTodos,
+  setFilteredTodos,
 }) => {
   return (
     <section className="todoapp__main" data-cy="TodoList">
-      {todos.map(todo => (
+      {filteredTodos.map(todo => (
         <TodoItem
           key={todo.id}
           todo={todo}
+          todos={todos}
           setTodos={setTodos}
-          allTodos={allTodos}
-          setAllTodos={setAllTodos}
           setErrorMessage={setErrorMessage}
           loadingTodoId={loadingTodoId}
           setLoadingTodoId={setLoadingTodoId}
+          setFilteredTodos={setFilteredTodos}
         />
       ))}
     </section>
