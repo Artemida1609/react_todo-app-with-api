@@ -2,12 +2,13 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useEffect, useRef, useState } from 'react';
 import { UserWarning } from './UserWarning';
-import { getTodos, USER_ID } from './api/todos';
+import { addTodo, getTodos, USER_ID } from './api/todos';
 import { Todo } from './types/Todo';
 import classNames from 'classnames';
 import { Header } from './components/Header';
 import { TodoList } from './components/TodoList';
 import { Footer } from './components/Footer';
+import { FilterType } from './enums/FilterType';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
@@ -15,6 +16,8 @@ export const App: React.FC = () => {
   const [loadingTodoId, setLoadingTodoId] = useState<number[]>([]);
   const inputFocus = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState('');
+  const [selectedLink, setSelectedLink] = useState<FilterType>(FilterType.All);
+  // const [activeTodos, setActiveTodos] = useState<number>(0);
   // const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
 
   useEffect(() => {
@@ -37,6 +40,26 @@ export const App: React.FC = () => {
     return;
   }, [errorMessage]);
 
+  const filterTodos = (selectedLinkProp: FilterType) => {
+    switch (selectedLinkProp) {
+      case FilterType.Active:
+        // setSelectedLink(FilterType.Active);
+        return todos.filter(todo => !todo.completed);
+      case FilterType.Completed:
+        // setSelectedLink(FilterType.Completed);
+        return todos.filter(todo => todo.completed);
+      default:
+        // setSelectedLink(FilterType.All);
+        return todos;
+    }
+  };
+
+  const filteredTodos = filterTodos(selectedLink);
+
+  let activeTodos = todos.filter(todo => !todo.completed).length;
+  // const activeFiltered = filterTodos(FilterType.Active);
+  // const completedFiltered = filterTodos(FilterType.Completed);
+
   if (!USER_ID) {
     return <UserWarning />;
   }
@@ -54,6 +77,8 @@ export const App: React.FC = () => {
           inputFocus={inputFocus}
           inputValue={inputValue}
           setInputValue={setInputValue}
+          activeTodos={activeTodos}
+          // setActiveTodos={setActiveTodos}
           // setFilteredTodos={setFilteredTodos}
         />
 
@@ -63,16 +88,22 @@ export const App: React.FC = () => {
           setErrorMessage={setErrorMessage}
           loadingTodoId={loadingTodoId}
           setLoadingTodoId={setLoadingTodoId}
+          filteredTodos={filteredTodos}
+          activeTodos={activeTodos}
           // filteredTodos={filteredTodos}
           // setFilteredTodos={setFilteredTodos}
         />
 
-        {todos.length > 0 && (
+        {todos?.length > 0 && (
           <Footer
             setLoadingTodoId={setLoadingTodoId}
             todos={todos}
             setTodos={setTodos}
             setErrorMessage={setErrorMessage}
+            selectedLink={selectedLink}
+            setSelectedLink={setSelectedLink}
+            activeTodos={activeTodos}
+            // setActiveTodos={setActiveTodos}
             // setFilteredTodos={setFilteredTodos}
           />
         )}

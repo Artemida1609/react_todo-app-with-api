@@ -11,6 +11,8 @@ type Props = {
   inputFocus: React.RefObject<HTMLInputElement>;
   inputValue: string;
   setInputValue: (arg: string) => void;
+  activeTodos: number;
+  // setActiveTodos: (arg: number) => void;
   // setFilteredTodos: (arg: Todo[]) => void;
 };
 
@@ -22,6 +24,8 @@ export const Header: React.FC<Props> = ({
   inputFocus,
   inputValue,
   setInputValue,
+  activeTodos
+  // setActiveTodos,
   // setFilteredTodos,
 }) => {
   const [disabled, setDisabled] = useState(false);
@@ -46,6 +50,7 @@ export const Header: React.FC<Props> = ({
 
       setDisabled(true);
       setLoadingTodoId([tempTodo.id]);
+      setTodos([...todos, tempTodo])
       // setFilteredTodos([...todos, tempTodo]);
 
       addTodo(newTodo)
@@ -54,6 +59,9 @@ export const Header: React.FC<Props> = ({
           // setFilteredTodos([...todos, newTodoFromServer]);
           setLoadingTodoId([]);
           setDisabled(false);
+          activeTodos = [...todos, newTodoFromServer].length;
+
+          // setActiveTodos([...todos, newTodoFromServer].length);
           setInputValue('');
         })
         .catch(() => {
@@ -71,10 +79,10 @@ export const Header: React.FC<Props> = ({
 
   const handleToggleAll = () => {
     let todosToToggle = [];
-    const activeTodos = todos.filter(todoElem => !todoElem.completed);
+    const activeTodosEl = todos.filter(todoElem => !todoElem.completed);
 
-    if (activeTodos.length > 0) {
-      todosToToggle = [...activeTodos];
+    if (activeTodosEl.length > 0) {
+      todosToToggle = [...activeTodosEl];
     } else {
       todosToToggle = todos.filter(todoEl => todoEl.completed);
     }
@@ -102,6 +110,7 @@ export const Header: React.FC<Props> = ({
         });
 
         setTodos(updatedTodos);
+        activeTodos = updatedTodos.length;
         // setFilteredTodos(updatedTodos);
         setLoadingTodoId([]);
       })

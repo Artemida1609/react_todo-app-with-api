@@ -2,13 +2,17 @@ import classNames from 'classnames';
 import React, { useEffect, useState } from 'react';
 import { Todo } from '../types/Todo';
 import { FilterType } from '../enums/FilterType';
-import { deleteTodo } from '../api/todos';
+import { addTodo, deleteTodo } from '../api/todos';
 
 type Props = {
   todos: Todo[];
   setTodos: (arg: Todo[]) => void;
   setErrorMessage: (arg: string) => void;
   setLoadingTodoId: (arg: number[]) => void;
+  selectedLink: FilterType;
+  setSelectedLink: (arg: FilterType) => void;
+  activeTodos: number;
+  // setActiveTodos: (arg: number) => void;
   // setFilteredTodos: (arg: Todo[]) => void;
 };
 
@@ -17,25 +21,13 @@ export const Footer: React.FC<Props> = ({
   setTodos,
   setErrorMessage,
   setLoadingTodoId,
+  selectedLink,
+  setSelectedLink,
+  activeTodos,
+  // setActiveTodos,
   // setFilteredTodos,
 }) => {
-  const [completedTodos, setCompletedTodos] = useState<Todo[]>(todos);
-  const [activeTodos, setActiveTodos] = useState<Todo[]>(todos);
-  const [selectedLink, setSelectedLink] = useState(FilterType.All);
 
-  const filterTodos = (selectedLinkProp: FilterType) => {
-    switch (selectedLinkProp) {
-      case FilterType.Active:
-        setSelectedLink(FilterType.Active);
-        return todos.filter(todo => !todo.completed);
-      case FilterType.Completed:
-        setSelectedLink(FilterType.Completed);
-        return todos.filter(todo => todo.completed);
-      default:
-        setSelectedLink(FilterType.All);
-        return todos;
-    }
-  };
 
   const handleClearCompleted = () => {
     const allCompletedTodos = todos.filter(todo => todo.completed);
@@ -68,19 +60,12 @@ export const Footer: React.FC<Props> = ({
     );
   };
 
-  useEffect(() => {
-    const completed = todos.filter(todoEl => todoEl.completed);
-    const active = todos.filter(todoElem => !todoElem.completed);
-
-    setCompletedTodos(completed);
-    setActiveTodos(active);
-    filterTodos(selectedLink);
-  }, [todos]);
+  const completedTodos = todos.filter(todo => todo.completed).length;
 
   return (
     <footer className="todoapp__footer" data-cy="Footer">
       <span className="todo-count" data-cy="TodosCounter">
-        {`${activeTodos.length} items left`}
+        {`${activeTodos} items left`}
       </span>
 
       <nav className="filter" data-cy="Filter">
@@ -93,10 +78,7 @@ export const Footer: React.FC<Props> = ({
                 selected: selectedLink === type,
               })}
               data-cy={type === 'All' ? 'FilterLinkAll' : `FilterLink${type}`}
-              onClick={() => {
-                const filteredTodos = filterTodos(type)
-                setTodos(filteredTodos);
-              }}
+              onClick={() => setSelectedLink(type)}
             >
               {type}
             </a>
@@ -107,7 +89,7 @@ export const Footer: React.FC<Props> = ({
       <button
         type="button"
         className="todoapp__clear-completed"
-        disabled={completedTodos.length === 0}
+        disabled={completedTodos === 0}
         data-cy="ClearCompletedButton"
         onClick={handleClearCompleted}
       >

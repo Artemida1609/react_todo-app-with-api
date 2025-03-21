@@ -8,6 +8,8 @@ type Props = {
   setErrorMessage: (arg: string) => void;
   loadingTodoId: number[];
   setLoadingTodoId: (arg: number[]) => void;
+  filteredTodos: Todo[];
+  activeTodos: number;
   // filteredTodos: Todo[];
   // setFilteredTodos: (arg: Todo[]) => void;
 };
@@ -18,12 +20,14 @@ export const TodoList: React.FC<Props> = ({
   setErrorMessage,
   loadingTodoId,
   setLoadingTodoId,
+  filteredTodos,
+  activeTodos,
   // filteredTodos,
   // setFilteredTodos,
 }) => {
   return (
     <section className="todoapp__main" data-cy="TodoList">
-      {todos.map(todo => (
+      {filteredTodos?.map(todo => (
         <TodoItem
           key={todo.id}
           todo={todo}
@@ -32,6 +36,7 @@ export const TodoList: React.FC<Props> = ({
           setErrorMessage={setErrorMessage}
           loadingTodoId={loadingTodoId}
           setLoadingTodoId={setLoadingTodoId}
+          activeTodos={activeTodos}
           // setFilteredTodos={setFilteredTodos}
         />
       ))}

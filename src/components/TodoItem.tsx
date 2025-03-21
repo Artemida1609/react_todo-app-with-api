@@ -10,6 +10,7 @@ type Props = {
   setErrorMessage: (arg: string) => void;
   loadingTodoId: number[];
   setLoadingTodoId: (arg: number[]) => void;
+  activeTodos: number;
   // setFilteredTodos: (arg: Todo[]) => void;
 };
 
@@ -20,6 +21,7 @@ export const TodoItem: React.FC<Props> = ({
   setErrorMessage,
   loadingTodoId,
   setLoadingTodoId,
+  activeTodos,
   // setFilteredTodos,
 }) => {
   const titleFocus = useRef<HTMLInputElement>(null);
@@ -34,6 +36,7 @@ export const TodoItem: React.FC<Props> = ({
         const filtered = todos.filter(todoItem => todoItem.id !== todoId);
 
         setTodos([...filtered]);
+        activeTodos = [...filtered].length;
         // setFilteredTodos([...filtered]);
         setLoadingTodoId([]);
       })
@@ -52,6 +55,7 @@ export const TodoItem: React.FC<Props> = ({
         );
 
         setTodos(updatedTodos);
+        activeTodos = updatedTodos.length;
         // setFilteredTodos(updatedTodos);
       })
       .catch(() => setErrorMessage('Unable to update a todo'))
