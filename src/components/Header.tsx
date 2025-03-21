@@ -11,7 +11,7 @@ type Props = {
   inputFocus: React.RefObject<HTMLInputElement>;
   inputValue: string;
   setInputValue: (arg: string) => void;
-  setFilteredTodos: (arg: Todo[]) => void;
+  // setFilteredTodos: (arg: Todo[]) => void;
 };
 
 export const Header: React.FC<Props> = ({
@@ -22,7 +22,7 @@ export const Header: React.FC<Props> = ({
   inputFocus,
   inputValue,
   setInputValue,
-  setFilteredTodos,
+  // setFilteredTodos,
 }) => {
   const [disabled, setDisabled] = useState(false);
 
@@ -46,12 +46,12 @@ export const Header: React.FC<Props> = ({
 
       setDisabled(true);
       setLoadingTodoId([tempTodo.id]);
-      setFilteredTodos([...todos, tempTodo]);
+      // setFilteredTodos([...todos, tempTodo]);
 
       addTodo(newTodo)
         .then(newTodoFromServer => {
           setTodos([...todos, newTodoFromServer]);
-          setFilteredTodos([...todos, newTodoFromServer]);
+          // setFilteredTodos([...todos, newTodoFromServer]);
           setLoadingTodoId([]);
           setDisabled(false);
           setInputValue('');
@@ -59,7 +59,7 @@ export const Header: React.FC<Props> = ({
         .catch(() => {
           setErrorMessage('Unable to add a todo');
           setTodos(todos.slice(0, todos.length));
-          setFilteredTodos(todos.slice(0, todos.length));
+          // setFilteredTodos(todos.slice(0, todos.length));
           setDisabled(false);
 
           setTimeout(() => {
@@ -102,7 +102,7 @@ export const Header: React.FC<Props> = ({
         });
 
         setTodos(updatedTodos);
-        setFilteredTodos(updatedTodos);
+        // setFilteredTodos(updatedTodos);
         setLoadingTodoId([]);
       })
       .catch(() => setErrorMessage('Unable to update a todo'));

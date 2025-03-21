@@ -9,7 +9,7 @@ type Props = {
   setTodos: (arg: Todo[]) => void;
   setErrorMessage: (arg: string) => void;
   setLoadingTodoId: (arg: number[]) => void;
-  setFilteredTodos: (arg: Todo[]) => void;
+  // setFilteredTodos: (arg: Todo[]) => void;
 };
 
 export const Footer: React.FC<Props> = ({
@@ -17,7 +17,7 @@ export const Footer: React.FC<Props> = ({
   setTodos,
   setErrorMessage,
   setLoadingTodoId,
-  setFilteredTodos,
+  // setFilteredTodos,
 }) => {
   const [completedTodos, setCompletedTodos] = useState<Todo[]>(todos);
   const [activeTodos, setActiveTodos] = useState<Todo[]>(todos);
@@ -27,16 +27,13 @@ export const Footer: React.FC<Props> = ({
     switch (selectedLinkProp) {
       case FilterType.Active:
         setSelectedLink(FilterType.Active);
-        setFilteredTodos(todos.filter(todo => !todo.completed));
-        break;
+        return todos.filter(todo => !todo.completed);
       case FilterType.Completed:
         setSelectedLink(FilterType.Completed);
-        setFilteredTodos(todos.filter(todo => todo.completed));
-        break;
+        return todos.filter(todo => todo.completed);
       default:
         setSelectedLink(FilterType.All);
-        setFilteredTodos(todos);
-        break;
+        return todos;
     }
   };
 
@@ -62,7 +59,7 @@ export const Footer: React.FC<Props> = ({
         );
 
         setTodos(updatedTodos);
-        setFilteredTodos(updatedTodos);
+        // setFilteredTodos(updatedTodos);
         setLoadingTodoId([]);
         if (failedIds.length > 0) {
           setErrorMessage('Unable to delete a todo');
@@ -96,7 +93,10 @@ export const Footer: React.FC<Props> = ({
                 selected: selectedLink === type,
               })}
               data-cy={type === 'All' ? 'FilterLinkAll' : `FilterLink${type}`}
-              onClick={() => filterTodos(type)}
+              onClick={() => {
+                const filteredTodos = filterTodos(type)
+                setTodos(filteredTodos);
+              }}
             >
               {type}
             </a>

@@ -15,16 +15,11 @@ export const App: React.FC = () => {
   const [loadingTodoId, setLoadingTodoId] = useState<number[]>([]);
   const inputFocus = useRef<HTMLInputElement>(null);
   const [inputValue, setInputValue] = useState('');
-  const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
+  // const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
 
   useEffect(() => {
     getTodos()
-      .then(todosFromServer => {
-        if (todosFromServer) {
-          setTodos(todosFromServer);
-          setFilteredTodos(todosFromServer);
-        }
-      })
+      .then(setTodos)
       .catch(() => {
         setErrorMessage('Unable to load todos');
       });
@@ -59,7 +54,7 @@ export const App: React.FC = () => {
           inputFocus={inputFocus}
           inputValue={inputValue}
           setInputValue={setInputValue}
-          setFilteredTodos={setFilteredTodos}
+          // setFilteredTodos={setFilteredTodos}
         />
 
         <TodoList
@@ -68,8 +63,8 @@ export const App: React.FC = () => {
           setErrorMessage={setErrorMessage}
           loadingTodoId={loadingTodoId}
           setLoadingTodoId={setLoadingTodoId}
-          filteredTodos={filteredTodos}
-          setFilteredTodos={setFilteredTodos}
+          // filteredTodos={filteredTodos}
+          // setFilteredTodos={setFilteredTodos}
         />
 
         {todos.length > 0 && (
@@ -78,7 +73,7 @@ export const App: React.FC = () => {
             todos={todos}
             setTodos={setTodos}
             setErrorMessage={setErrorMessage}
-            setFilteredTodos={setFilteredTodos}
+            // setFilteredTodos={setFilteredTodos}
           />
         )}
       </div>
