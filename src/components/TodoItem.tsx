@@ -11,7 +11,6 @@ type Props = {
   loadingTodoId: number[];
   setLoadingTodoId: (arg: number[]) => void;
   activeTodos: number;
-  // setFilteredTodos: (arg: Todo[]) => void;
 };
 
 export const TodoItem: React.FC<Props> = ({
@@ -22,7 +21,6 @@ export const TodoItem: React.FC<Props> = ({
   loadingTodoId,
   setLoadingTodoId,
   activeTodos,
-  // setFilteredTodos,
 }) => {
   const titleFocus = useRef<HTMLInputElement>(null);
   const [editingTitle, setEditingTitle] = useState(false);
@@ -37,7 +35,6 @@ export const TodoItem: React.FC<Props> = ({
 
         setTodos([...filtered]);
         activeTodos = [...filtered].length;
-        // setFilteredTodos([...filtered]);
         setLoadingTodoId([]);
       })
       .catch(() => setErrorMessage(`Unable to delete a todo`));
@@ -56,7 +53,6 @@ export const TodoItem: React.FC<Props> = ({
 
         setTodos(updatedTodos);
         activeTodos = updatedTodos.length;
-        // setFilteredTodos(updatedTodos);
       })
       .catch(() => setErrorMessage('Unable to update a todo'))
       .finally(() => {
@@ -94,7 +90,6 @@ export const TodoItem: React.FC<Props> = ({
         );
 
         setTodos(updatedTodos);
-        // setTodos(updatedTodos);
         setEditingTitle(false);
       })
       .catch(() => {

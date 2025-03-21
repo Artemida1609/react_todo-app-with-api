@@ -10,8 +10,6 @@ type Props = {
   setLoadingTodoId: (arg: number[]) => void;
   filteredTodos: Todo[];
   activeTodos: number;
-  // filteredTodos: Todo[];
-  // setFilteredTodos: (arg: Todo[]) => void;
 };
 
 export const TodoList: React.FC<Props> = ({
@@ -22,8 +20,6 @@ export const TodoList: React.FC<Props> = ({
   setLoadingTodoId,
   filteredTodos,
   activeTodos,
-  // filteredTodos,
-  // setFilteredTodos,
 }) => {
   return (
     <section className="todoapp__main" data-cy="TodoList">
@@ -37,7 +33,6 @@ export const TodoList: React.FC<Props> = ({
           loadingTodoId={loadingTodoId}
           setLoadingTodoId={setLoadingTodoId}
           activeTodos={activeTodos}
-          // setFilteredTodos={setFilteredTodos}
         />
       ))}
     </section>

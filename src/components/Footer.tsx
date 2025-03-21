@@ -1,8 +1,8 @@
 import classNames from 'classnames';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Todo } from '../types/Todo';
 import { FilterType } from '../enums/FilterType';
-import { addTodo, deleteTodo } from '../api/todos';
+import { deleteTodo } from '../api/todos';
 
 type Props = {
   todos: Todo[];
@@ -12,8 +12,6 @@ type Props = {
   selectedLink: FilterType;
   setSelectedLink: (arg: FilterType) => void;
   activeTodos: number;
-  // setActiveTodos: (arg: number) => void;
-  // setFilteredTodos: (arg: Todo[]) => void;
 };
 
 export const Footer: React.FC<Props> = ({
@@ -24,8 +22,6 @@ export const Footer: React.FC<Props> = ({
   selectedLink,
   setSelectedLink,
   activeTodos,
-  // setActiveTodos,
-  // setFilteredTodos,
 }) => {
 
 
@@ -51,7 +47,6 @@ export const Footer: React.FC<Props> = ({
         );
 
         setTodos(updatedTodos);
-        // setFilteredTodos(updatedTodos);
         setLoadingTodoId([]);
         if (failedIds.length > 0) {
           setErrorMessage('Unable to delete a todo');
