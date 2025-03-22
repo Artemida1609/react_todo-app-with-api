@@ -73,7 +73,7 @@ export const Header: React.FC<Props> = ({
     let todosToToggle = [];
     const activeTodosEl = todos.filter(todoElem => !todoElem.completed);
 
-    if (activeTodosEl.length > 0) {
+    if (activeTodosEl.length) {
       todosToToggle = [...activeTodosEl];
     } else {
       todosToToggle = todos.filter(todoEl => todoEl.completed);
@@ -119,7 +119,7 @@ export const Header: React.FC<Props> = ({
 
   return (
     <header className="todoapp__header">
-      {todos.length > 0 && (
+      {todos.length && (
         <button
           type="button"
           className={classNames('todoapp__toggle-all', {
