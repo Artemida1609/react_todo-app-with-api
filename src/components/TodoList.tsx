@@ -9,7 +9,9 @@ type Props = {
   loadingTodoId: number[];
   setLoadingTodoId: (arg: number[]) => void;
   filteredTodos: Todo[];
-  activeTodos: number;
+  onDeleteTodo: (arg: number) => void;
+  onUpdateTodo: (arg: Todo) => void;
+  // activeTodos: number;
 };
 
 export const TodoList: React.FC<Props> = ({
@@ -19,7 +21,9 @@ export const TodoList: React.FC<Props> = ({
   loadingTodoId,
   setLoadingTodoId,
   filteredTodos,
-  activeTodos,
+  onDeleteTodo,
+  onUpdateTodo,
+  // activeTodos,
 }) => {
   return (
     <section className="todoapp__main" data-cy="TodoList">
@@ -32,7 +36,9 @@ export const TodoList: React.FC<Props> = ({
           setErrorMessage={setErrorMessage}
           loadingTodoId={loadingTodoId}
           setLoadingTodoId={setLoadingTodoId}
-          activeTodos={activeTodos}
+          onDeleteTodo={onDeleteTodo}
+          onUpdateTodo={onUpdateTodo}
+          // activeTodos={activeTodos}
         />
       ))}
     </section>

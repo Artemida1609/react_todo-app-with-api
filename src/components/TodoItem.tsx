@@ -1,6 +1,6 @@
 import classNames from 'classnames';
 import { Todo } from '../types/Todo';
-import { deleteTodo, updateTodo } from '../api/todos';
+import { updateTodo } from '../api/todos';
 import { useEffect, useRef, useState } from 'react';
 
 type Props = {
@@ -10,7 +10,8 @@ type Props = {
   setErrorMessage: (arg: string) => void;
   loadingTodoId: number[];
   setLoadingTodoId: (arg: number[]) => void;
-  activeTodos: number;
+  onDeleteTodo: (arg: number) => void;
+  onUpdateTodo: (arg: Todo) => void;
 };
 
 export const TodoItem: React.FC<Props> = ({
@@ -20,44 +21,26 @@ export const TodoItem: React.FC<Props> = ({
   setErrorMessage,
   loadingTodoId,
   setLoadingTodoId,
-  activeTodos,
+  onDeleteTodo,
+  onUpdateTodo,
 }) => {
   const titleFocus = useRef<HTMLInputElement>(null);
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleInputValue, setTitleInputValue] = useState('');
 
-  const handleDeleteButton = (todoId: number) => {
-    setLoadingTodoId([todoId]);
+  const handleToggleTodo = () => {
+    const updatedTodo = {
+      id,
+      completed: !completed,
+      title,
+      userId,
+    };
 
-    deleteTodo(todoId)
-      .then(() => {
-        const filtered = todos.filter(todoItem => todoItem.id !== todoId);
-
-        setTodos([...filtered]);
-        activeTodos = [...filtered].length;
-        setLoadingTodoId([]);
-      })
-      .catch(() => setErrorMessage(`Unable to delete a todo`));
+    onUpdateTodo(updatedTodo);
   };
 
-  const handleToggleTodo = () => {
-    setLoadingTodoId([id]);
-
-    const updatedTodo = { id, completed: !completed, title, userId };
-
-    updateTodo(updatedTodo)
-      .then(todoEle => {
-        const updatedTodos = todos.map(t =>
-          t.id === todoEle.id ? updatedTodo : t,
-        );
-
-        setTodos(updatedTodos);
-        activeTodos = updatedTodos.length;
-      })
-      .catch(() => setErrorMessage('Unable to update a todo'))
-      .finally(() => {
-        setLoadingTodoId([]);
-      });
+  const handleDeleteTodo = () => {
+    onDeleteTodo(id);
   };
 
   const handleDoubleClick = () => {
@@ -76,7 +59,7 @@ export const TodoItem: React.FC<Props> = ({
     }
 
     if (preparedTitle.length === 0) {
-      handleDeleteButton(id);
+      handleDeleteTodo();
 
       return;
     }
@@ -178,7 +161,7 @@ export const TodoItem: React.FC<Props> = ({
             type="button"
             className="todo__remove"
             data-cy="TodoDelete"
-            onClick={() => handleDeleteButton(id)}
+            onClick={handleDeleteTodo}
           >
             ×
           </button>

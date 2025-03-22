@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import React, { useEffect, useRef, useState } from 'react';
 import { UserWarning } from './UserWarning';
-import { getTodos, USER_ID } from './api/todos';
+import { updateTodo, deleteTodo, getTodos, USER_ID } from './api/todos';
 import { Todo } from './types/Todo';
 import classNames from 'classnames';
 import { Header } from './components/Header';
@@ -51,7 +51,35 @@ export const App: React.FC = () => {
 
   const filteredTodos = filterTodos(selectedLink);
 
-  let activeTodos = todos.filter(todo => !todo.completed).length;
+  const onDeleteTodo = (todoId: number) => {
+    setLoadingTodoId([todoId]);
+
+    deleteTodo(todoId)
+      .then(() => {
+        const filtered = todos.filter(todoItem => todoItem.id !== todoId);
+
+        setTodos(filtered);
+      })
+      .catch(() => setErrorMessage(`Unable to delete a todo`))
+      .finally(() => setLoadingTodoId([]));
+  };
+
+  const onUpdateTodo = (updatedTodo: Todo) => {
+    setLoadingTodoId([updatedTodo.id]);
+
+    updateTodo(updatedTodo)
+      .then(todoEle => {
+        const updatedTodos = todos.map(t =>
+          t.id === todoEle.id ? updatedTodo : t,
+        );
+
+        setTodos(updatedTodos);
+      })
+      .catch(() => setErrorMessage('Unable to update a todo'))
+      .finally(() => {
+        setLoadingTodoId([]);
+      });
+  };
 
   if (!USER_ID) {
     return <UserWarning />;
@@ -70,7 +98,6 @@ export const App: React.FC = () => {
           inputFocus={inputFocus}
           inputValue={inputValue}
           setInputValue={setInputValue}
-          activeTodos={activeTodos}
         />
 
         <TodoList
@@ -80,18 +107,19 @@ export const App: React.FC = () => {
           loadingTodoId={loadingTodoId}
           setLoadingTodoId={setLoadingTodoId}
           filteredTodos={filteredTodos}
-          activeTodos={activeTodos}
+          onDeleteTodo={onDeleteTodo}
+          onUpdateTodo={onUpdateTodo}
         />
 
         {filterTodos(FilterType.All)?.length > 0 && (
           <Footer
+            loadingTodoId={loadingTodoId}
             setLoadingTodoId={setLoadingTodoId}
             todos={todos}
             setTodos={setTodos}
             setErrorMessage={setErrorMessage}
             selectedLink={selectedLink}
             setSelectedLink={setSelectedLink}
-            activeTodos={activeTodos}
           />
         )}
       </div>

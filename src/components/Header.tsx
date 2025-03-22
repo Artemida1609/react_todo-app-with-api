@@ -11,7 +11,6 @@ type Props = {
   inputFocus: React.RefObject<HTMLInputElement>;
   inputValue: string;
   setInputValue: (arg: string) => void;
-  activeTodos: number;
 };
 
 export const Header: React.FC<Props> = ({
@@ -22,7 +21,6 @@ export const Header: React.FC<Props> = ({
   inputFocus,
   inputValue,
   setInputValue,
-  activeTodos,
 }) => {
   const [disabled, setDisabled] = useState(false);
 
@@ -46,14 +44,13 @@ export const Header: React.FC<Props> = ({
 
       setDisabled(true);
       setLoadingTodoId([tempTodo.id]);
-      setTodos([...todos, tempTodo])
+      setTodos([...todos, tempTodo]);
 
       addTodo(newTodo)
         .then(newTodoFromServer => {
           setTodos([...todos, newTodoFromServer]);
           setLoadingTodoId([]);
           setDisabled(false);
-          activeTodos = [...todos, newTodoFromServer].length;
 
           setInputValue('');
         })
@@ -102,7 +99,6 @@ export const Header: React.FC<Props> = ({
         });
 
         setTodos(updatedTodos);
-        activeTodos = updatedTodos.length;
         setLoadingTodoId([]);
       })
       .catch(() => setErrorMessage('Unable to update a todo'));
